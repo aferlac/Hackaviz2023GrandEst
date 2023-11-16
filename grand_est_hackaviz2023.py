@@ -6,9 +6,18 @@ import streamlit as st
 import matplotlib.pyplot as plt 
 
 @st.cache_data
-def chargement(file):
-    df = pd.read_csv(file)
-    return df
+def chargement(lien_geo, lien_poi):
+    # Chargement des données
+    data_com = pd.read_csv(lien_geo) # Données des communes ayant des réservations de séjour (Nom, département, latitude, longitude, ...)
+
+    df_poi=pd.read_csv(lien_poi+'1.csv')
+    for i in range(2,61):
+        df_poi=pd.concat([df_poi,pd.read_csv(lien_poi+str(i)+'.csv')])
+        df_poi.reset_index(inplace=True)
+        df_poi.drop('index', axis=1, inplace=True)
+    df_poi.drop_duplicates(inplace=True)
+    df_poi.reset_index(inplace=True) # Données des POI (Nom, commune, classe, latitude, longitude, distance aux communes du data_com)
+    return (data_com, df_poi)
 
 # Parametrage de la page
 st.set_page_config(page_title=" HACKAVIZ GRAND EST 2023 ",
@@ -48,16 +57,7 @@ def color(classe):
 st.title("Vous avez réservé dans la région Grand Est.")
 st.header("Que découvrir à 1 heure de votre lieu de séjour ?")
 
-# Chargement des données
-data_com = chargement('./data_com_app.csv') # Données des communes ayant des réservations de séjour (Nom, département, latitude, longitude, ...)
-
-df_poi=chargement('./poi_hackaviz_grand_est_1.csv')
-for i in range(2,61):
-    df_poi=pd.concat([df_poi,chargement('./poi_hackaviz_grand_est_'+str(i)+'.csv')])
-    df_poi.reset_index(inplace=True)
-    df_poi.drop('index', axis=1, inplace=True)
-df_poi.drop_duplicates(inplace=True)
-df_poi.reset_index(inplace=True) # Données des POI (Nom, commune, classe, latitude, longitude, distance aux communes du data_com)
+data_com, df_poi = chargement('./data_com_app.csv', './poi_hackaviz_grand_est_')
 
 # Choix du département de séjour
 col1, col2, col3= st.columns([1,1,1])
