@@ -53,7 +53,7 @@ data_com = chargement('./data_com_app.csv') # Donn√©es des communes ayant des r√
 
 df_poi=chargement('./poi_hackaviz_grand_est_1.csv')
 for i in range(2,61):
-    df_poi=pd.concat([df,chargement('./poi_hackaviz_grand_est_'+str(i)+'.csv')])
+    df_poi=pd.concat([df_poi,chargement('./poi_hackaviz_grand_est_'+str(i)+'.csv')])
     df_poi.reset_index(inplace=True)
     df_poi.drop('index', axis=1, inplace=True)
 df_poi.drop_duplicates(inplace=True)
